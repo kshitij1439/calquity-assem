@@ -132,7 +132,8 @@ def classify_and_route(state: AgentState) -> dict[str, Any]:
         HumanMessage(content=f"Query: {query}"),
     ]
 
-    decision = _call_llm_with_fallback(messages, RouteDecision)
+    model_override = state.get("model_override")
+    decision = _call_llm_with_fallback(messages, RouteDecision, model_name=model_override)
 
     log.info("node.classify", needs_docs=decision.needs_documents,
              needs_data=decision.needs_structured_data,
@@ -208,7 +209,8 @@ def lookup_data(state: AgentState) -> dict[str, Any]:
 
     t0 = time.time()
     try:
-        intent_decision = _call_llm_with_fallback(intent_messages, DataIntent)
+        model_override = state.get("model_override")
+        intent_decision = _call_llm_with_fallback(intent_messages, DataIntent, model_name=model_override)
         result = query_operational_data.invoke({
             "intent": intent_decision.intent,
             "params": intent_decision.params,
