@@ -31,6 +31,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash");
   const [account, setAccount] = useState<{ id: string; name: string; role: string }>({
     id: "ACCT-001",
     name: "Northstar Logistics",
@@ -59,7 +60,7 @@ export default function ChatPage() {
           "X-Account-ID": account.id,
           "X-User-Role": account.role,
         },
-        body: JSON.stringify({ message: userMsg.content, thread_id: threadId }),
+        body: JSON.stringify({ message: userMsg.content, thread_id: threadId, model: selectedModel }),
       });
 
       if (!res.ok) {
@@ -149,9 +150,22 @@ export default function ChatPage() {
             <span className="text-white font-semibold text-sm">ParcelPilot</span>
           </Link>
           <span className="text-gray-600">/</span>
-          <span className="text-gray-400 text-sm">Support Chat</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-2.5 py-1">
+            <span className="text-xs text-gray-400 font-medium">Model:</span>
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              className="bg-transparent text-xs text-indigo-400 font-semibold focus:outline-none cursor-pointer"
+            >
+              <option value="gemini-2.5-flash" className="bg-gray-900 text-white">Gemini 2.5 Flash</option>
+              <option value="gemini-2.5-flash-lite" className="bg-gray-900 text-white">Gemini 2.5 Flash Lite</option>
+              <option value="gemini-2.5-pro" className="bg-gray-900 text-white">Gemini 2.5 Pro</option>
+              <option value="llama-3.3-70b-versatile" className="bg-gray-900 text-white">Groq Llama 3.3 70B</option>
+            </select>
+          </div>
+          <AccountSwitcher account={account} onChange={setAccount} />
         </div>
-        <AccountSwitcher account={account} onChange={setAccount} />
       </header>
 
       {/* Messages */}

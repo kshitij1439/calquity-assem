@@ -34,6 +34,7 @@ router = APIRouter()
 class ChatRequest(BaseModel):
     message: str = Field(min_length=1, max_length=4000)
     thread_id: str | None = Field(default=None, description="Session thread ID for memory")
+    model: str | None = Field(default=None, description="Override LLM model (e.g. gemini-2.5-flash, gemini-2.5-flash-lite, llama-3.3-70b-versatile)")
 
 
 class ChatResponse(BaseModel):
@@ -93,6 +94,7 @@ async def chat(
         "messages": [HumanMessage(content=request.message)],
         "account_id": ctx.account_id,
         "user_role": ctx.role,
+        "model_override": request.model,
         "retrieved_docs": [],
         "structured_data": None,
         "tool_trace": [],

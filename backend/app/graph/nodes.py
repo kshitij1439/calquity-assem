@@ -38,9 +38,10 @@ log = structlog.get_logger()
 _groq_failure_count = 0
 
 
-def _get_llm(force_fallback: bool = False):
+def _get_llm(model_name: str | None = None, force_fallback: bool = False):
     global _groq_failure_count
-    model_name = settings.fallback_model if (force_fallback or _groq_failure_count >= settings.llm_circuit_breaker_threshold) else settings.primary_model
+    if not model_name:
+        model_name = settings.fallback_model if (force_fallback or _groq_failure_count >= settings.llm_circuit_breaker_threshold) else settings.primary_model
     if model_name.startswith("gemini"):
         return ChatGoogleGenerativeAI(
             model=model_name,
@@ -54,10 +55,10 @@ def _get_llm(force_fallback: bool = False):
     )
 
 
-def _call_llm_with_fallback(messages, structured_output_class=None):
+def _call_llm_with_fallback(messages, structured_output_class=None, model_name: str | None = None):
     """Call LLM with automatic fallback and PydanticOutputParser recovery."""
     global _groq_failure_count
-    llm = _get_llm()
+    llm = _get_llm(model_name=model_name)
     if structured_output_class:
         try:
             return llm.with_structured_output(structured_output_class).invoke(messages)
@@ -288,7 +289,8 @@ def draft_answer(state: AgentState) -> dict[str, Any]:
 
     t0 = time.time()
     try:
-        response: AgentResponse = _call_llm_with_fallback(messages, AgentResponse)
+        model_override = state.get("model_override")
+        response: AgentResponse = _call_llm_with_fallback(messages, AgentResponse, model_name=model_override)
     except Exception as e:
         log.error("node.draft_answer.error", error=str(e))
         response = AgentResponse(

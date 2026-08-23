@@ -30,6 +30,7 @@ class AgentState(TypedDict):
     # Auth context (injected at entry, never modified by nodes)
     account_id: str
     user_role: str  # "staff" | "customer"
+    model_override: str | None
 
     # Retrieved context
     retrieved_docs: list[dict[str, Any]]
