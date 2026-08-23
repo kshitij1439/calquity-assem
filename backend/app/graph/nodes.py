@@ -126,7 +126,7 @@ def classify_and_route(state: AgentState) -> dict[str, Any]:
         SystemMessage(content=(
             "You are a routing classifier. Analyse the query and decide which tools are needed.\n"
             "needs_documents: True if the query requires policy, SOP, contract, or product doc information.\n"
-            "needs_structured_data: True if the query requires account, order, or ticket data.\n"
+            "needs_structured_data: True if the query mentions an order ID (e.g. ORD-1001), ticket ID (e.g. TKT-5001), account name/ID (e.g. Northstar, ACCT-001), or requires operational database lookups.\n"
             "include_deprecated_docs: True ONLY if the user explicitly asks about old/historical/deprecated policy.\n"
         )),
         HumanMessage(content=f"Query: {query}"),
