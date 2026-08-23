@@ -86,21 +86,32 @@ def _make_doc_id(source_file: str, chunk_index: int) -> str:
 
 def _get_embedder():
     """
-    Return an embedding function compatible with the configured vector size.
-    Uses langchain-community's HuggingFace embeddings (runs locally, no API key).
-    Falls back to Groq/OpenAI embedding if GROQ_API_KEY is set.
+    Return an embedding function compatible with the configured vector size (384).
+    Tries fastembed (ONNX runtime, <50MB RAM) first for high performance and low memory.
+    Falls back to HuggingFaceEmbeddings if fastembed is not installed.
     """
+    try:
+        from fastembed import TextEmbedding
+
+        class _FastEmbedWrapper:
+            def __init__(self):
+                self._model = TextEmbedding("sentence-transformers/all-MiniLM-L6-v2")
+
+            def embed_query(self, text: str) -> list[float]:
+                return [float(x) for x in next(self._model.embed([text]))]
+
+        return _FastEmbedWrapper()
+    except Exception:
+        pass
+
     try:
         from langchain_community.embeddings import HuggingFaceEmbeddings
         return HuggingFaceEmbeddings(
             model_name="sentence-transformers/all-MiniLM-L6-v2",
             model_kwargs={"device": "cpu"},
         )
-    except Exception:
-        raise RuntimeError(
-            "Could not load embedding model. "
-            "Run: pip install sentence-transformers"
-        )
+    except Exception as e:
+        raise RuntimeError(f"Could not load embedding model: {e}")
 
 
 def ingest_pdf(pdf_path: Path, embedder=None) -> int:

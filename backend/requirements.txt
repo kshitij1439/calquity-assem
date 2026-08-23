@@ -18,6 +18,7 @@ qdrant-client==1.11.0
 langchain-qdrant==0.1.4
 
 # Embeddings
+fastembed>=0.3.0
 sentence-transformers==3.1.1
 pypdf==4.3.1
 openpyxl==3.1.5
