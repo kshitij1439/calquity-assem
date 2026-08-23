@@ -144,9 +144,9 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col">
+    <div className="h-screen max-h-screen bg-gray-950 flex flex-col overflow-hidden w-full">
       {/* Header */}
-      <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur px-6 py-3 flex items-center justify-between sticky top-0 z-10">
+      <header className="shrink-0 border-b border-gray-800 bg-gray-900/80 backdrop-blur px-6 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
             <div className="w-8 h-8 rounded-lg overflow-hidden bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center">
@@ -174,106 +174,104 @@ export default function ChatPage() {
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-hidden">
-        <ScrollArea className="h-[calc(100vh-130px)]">
-          <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
-            {messages.length === 0 && (
-              <div className="text-center py-12 space-y-4">
-                <div className="w-28 h-28 mx-auto relative flex items-center justify-center overflow-hidden rounded-3xl bg-indigo-950/40 border border-indigo-500/30 shadow-xl shadow-indigo-500/10">
-                  <MascotViewport />
-                </div>
-                <h2 className="text-white font-semibold text-xl">ParcelPilot Support Agent</h2>
-                <p className="text-gray-400 text-sm max-w-sm mx-auto">
-                  Ask about orders, cancellations, SLA status, service credits, or policy questions.
-                </p>
-                <div className="flex flex-wrap gap-2 justify-center pt-2">
-                  {[
-                    "Can Northstar cancel ORD-1001 without a fee?",
-                    "What's the P1 SLA for Northstar?",
-                    "Is there a service credit for a 3-hour late pickup?",
-                  ].map((q) => (
-                    <button
-                      key={q}
-                      onClick={() => setInput(q)}
-                      className="text-xs bg-gray-800 text-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-700 transition-colors"
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-6">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {messages.length === 0 && (
+            <div className="text-center py-12 space-y-4">
+              <div className="w-28 h-28 mx-auto relative flex items-center justify-center overflow-hidden rounded-3xl bg-indigo-950/40 border border-indigo-500/30 shadow-xl shadow-indigo-500/10">
+                <MascotViewport />
               </div>
-            )}
-
-            {messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className={`max-w-[80%] space-y-2 ${msg.role === "user" ? "items-end" : "items-start"} flex flex-col`}>
-                  {/* Bubble */}
-                  <div
-                    className={`rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-                      msg.role === "user"
-                        ? "bg-indigo-600 text-white rounded-br-sm"
-                        : "bg-gray-800 text-gray-100 rounded-bl-sm"
-                    }`}
+              <h2 className="text-white font-semibold text-xl">ParcelPilot Support Agent</h2>
+              <p className="text-gray-400 text-sm max-w-sm mx-auto">
+                Ask about orders, cancellations, SLA status, service credits, or policy questions.
+              </p>
+              <div className="flex flex-wrap gap-2 justify-center pt-2">
+                {[
+                  "Can Northstar cancel ORD-1001 without a fee?",
+                  "What's the P1 SLA for Northstar?",
+                  "Is there a service credit for a 3-hour late pickup?",
+                ].map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => setInput(q)}
+                    className="text-xs bg-gray-800 text-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-700 transition-colors"
                   >
-                    {msg.content}
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {messages.map((msg) => (
+            <div key={msg.id} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+              <div className={`max-w-[80%] space-y-2 ${msg.role === "user" ? "items-end" : "items-start"} flex flex-col`}>
+                {/* Bubble */}
+                <div
+                  className={`rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
+                    msg.role === "user"
+                      ? "bg-indigo-600 text-white rounded-br-sm"
+                      : "bg-gray-800 text-gray-100 rounded-bl-sm"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+
+                {/* Tool trace */}
+                {msg.toolTrace && msg.toolTrace.length > 0 && (
+                  <ToolTraceBadge trace={msg.toolTrace} />
+                )}
+
+                {/* Meta badges */}
+                {msg.role === "assistant" && (
+                  <div className="flex flex-wrap gap-1.5 items-center">
+                    {msg.confidence && (
+                      <Badge variant={confidenceBadgeVariant(msg.confidence)} className="text-xs">
+                        Confidence: {msg.confidence}
+                      </Badge>
+                    )}
+                    {msg.escalate && (
+                      <Badge variant="destructive" className="text-xs">
+                        ⚠ Escalation recommended
+                      </Badge>
+                    )}
                   </div>
+                )}
 
-                  {/* Tool trace */}
-                  {msg.toolTrace && msg.toolTrace.length > 0 && (
-                    <ToolTraceBadge trace={msg.toolTrace} />
-                  )}
-
-                  {/* Meta badges */}
-                  {msg.role === "assistant" && (
-                    <div className="flex flex-wrap gap-1.5 items-center">
-                      {msg.confidence && (
-                        <Badge variant={confidenceBadgeVariant(msg.confidence)} className="text-xs">
-                          Confidence: {msg.confidence}
-                        </Badge>
-                      )}
-                      {msg.escalate && (
-                        <Badge variant="destructive" className="text-xs">
-                          ⚠ Escalation recommended
-                        </Badge>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Sources */}
-                  {msg.sources && msg.sources.length > 0 && (
-                    <div className="text-xs text-gray-500 space-y-0.5">
-                      <span className="font-medium text-gray-400">Sources: </span>
-                      {[...new Set(msg.sources)].map((s) => (
-                        <span key={s} className="inline-block bg-gray-800/60 px-2 py-0.5 rounded mr-1">
-                          {s.replace(/_/g, " ").replace(".pdf", "")}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                {/* Sources */}
+                {msg.sources && msg.sources.length > 0 && (
+                  <div className="text-xs text-gray-500 space-y-0.5">
+                    <span className="font-medium text-gray-400">Sources: </span>
+                    {[...new Set(msg.sources)].map((s) => (
+                      <span key={s} className="inline-block bg-gray-800/60 px-2 py-0.5 rounded mr-1">
+                        {s.replace(/_/g, " ").replace(".pdf", "")}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
-            ))}
+            </div>
+          ))}
 
-            {loading && (
-              <div className="flex justify-start">
-                <div className="bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1">
-                  {[0, 1, 2].map((i) => (
-                    <div
-                      key={i}
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: `${i * 0.15}s` }}
-                    />
-                  ))}
-                </div>
+          {loading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-3 flex gap-1">
+                {[0, 1, 2].map((i) => (
+                  <div
+                    key={i}
+                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style={{ animationDelay: `${i * 0.15}s` }}
+                  />
+                ))}
               </div>
-            )}
-            <div ref={bottomRef} />
-          </div>
-        </ScrollArea>
+            </div>
+          )}
+          <div ref={bottomRef} />
+        </div>
       </div>
 
       {/* Input */}
-      <div className="border-t border-gray-800 bg-gray-900/80 backdrop-blur px-4 py-4">
+      <div className="shrink-0 border-t border-gray-800 bg-gray-900/80 backdrop-blur px-4 py-4">
         <div className="max-w-3xl mx-auto flex gap-3">
           <input
             type="text"
