@@ -31,7 +31,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash");
+  const [selectedModel, setSelectedModel] = useState("groq/compound");
   const [account, setAccount] = useState<{ id: string; name: string; role: string }>({
     id: "ACCT-001",
     name: "Northstar Logistics",
@@ -158,10 +158,8 @@ export default function ChatPage() {
               onChange={(e) => setSelectedModel(e.target.value)}
               className="bg-transparent text-xs text-indigo-400 font-semibold focus:outline-none cursor-pointer"
             >
+              <option value="groq/compound" className="bg-gray-900 text-white">Groq Model (Default)</option>
               <option value="gemini-2.5-flash" className="bg-gray-900 text-white">Gemini 2.5 Flash</option>
-              <option value="gemini-2.5-flash-lite" className="bg-gray-900 text-white">Gemini 2.5 Flash Lite</option>
-              <option value="gemini-2.5-pro" className="bg-gray-900 text-white">Gemini 2.5 Pro</option>
-              <option value="llama-3.3-70b-versatile" className="bg-gray-900 text-white">Groq Llama 3.3 70B</option>
             </select>
           </div>
           <AccountSwitcher account={account} onChange={setAccount} />

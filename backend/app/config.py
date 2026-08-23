@@ -35,8 +35,8 @@ class Settings(BaseSettings):
     # ── LLM ───────────────────────────────────────────────────────────────────
     groq_api_key: str = ""
     gemini_api_key: str = ""
-    primary_model: str = "gemini-2.5-flash"
-    fallback_model: str = "gemini-2.5-flash-lite"
+    primary_model: str = "groq/compound"
+    fallback_model: str = "gemini-2.5-flash"
     # After this many consecutive Groq failures, switch to fallback for session
     llm_circuit_breaker_threshold: int = 3
     llm_timeout_seconds: int = 30
