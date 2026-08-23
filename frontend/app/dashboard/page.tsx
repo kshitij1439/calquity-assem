@@ -8,6 +8,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const MascotViewport = dynamic(() => import("../components/MascotViewport"), {
+  ssr: false,
+});
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api/v1";
 
@@ -84,9 +89,9 @@ export default function DashboardPage() {
       {/* Header */}
       <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur px-6 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-7 h-7 bg-indigo-500 rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm font-bold">P</span>
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 rounded-lg overflow-hidden bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center">
+              <MascotViewport />
             </div>
             <span className="text-white font-semibold text-sm">ParcelPilot</span>
           </Link>

@@ -7,6 +7,11 @@ import { ConfirmActionDialog } from "@/components/confirm-action-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const MascotViewport = dynamic(() => import("../components/MascotViewport"), {
+  ssr: false,
+});
 
 interface Message {
   id: string;
@@ -143,13 +148,15 @@ export default function ChatPage() {
       {/* Header */}
       <header className="border-b border-gray-800 bg-gray-900/80 backdrop-blur px-6 py-3 flex items-center justify-between sticky top-0 z-10">
         <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-            <div className="w-7 h-7 bg-indigo-500 rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm font-bold">P</span>
+          <Link href="/" className="flex items-center gap-2.5 hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 rounded-lg overflow-hidden bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center">
+              <MascotViewport />
             </div>
             <span className="text-white font-semibold text-sm">ParcelPilot</span>
           </Link>
           <span className="text-gray-600">/</span>
+          <span className="text-gray-400 text-sm">Support Chat</span>
+        </div>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg px-2.5 py-1">
             <span className="text-xs text-gray-400 font-medium">Model:</span>
@@ -171,9 +178,9 @@ export default function ChatPage() {
         <ScrollArea className="h-[calc(100vh-130px)]">
           <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
             {messages.length === 0 && (
-              <div className="text-center py-16 space-y-3">
-                <div className="w-16 h-16 bg-indigo-500/20 rounded-2xl flex items-center justify-center mx-auto">
-                  <span className="text-3xl">🤖</span>
+              <div className="text-center py-12 space-y-4">
+                <div className="w-28 h-28 mx-auto relative flex items-center justify-center overflow-hidden rounded-3xl bg-indigo-950/40 border border-indigo-500/30 shadow-xl shadow-indigo-500/10">
+                  <MascotViewport />
                 </div>
                 <h2 className="text-white font-semibold text-xl">ParcelPilot Support Agent</h2>
                 <p className="text-gray-400 text-sm max-w-sm mx-auto">

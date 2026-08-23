@@ -1,14 +1,21 @@
+"use client";
+
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+const MascotViewport = dynamic(() => import("./components/MascotViewport"), {
+  ssr: false,
+});
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-gray-950 flex flex-col items-center justify-center gap-8 p-8">
-      <div className="text-center space-y-4">
-        <div className="flex items-center justify-center gap-3 mb-2">
-          <div className="w-10 h-10 bg-indigo-500 rounded-xl flex items-center justify-center">
-            <span className="text-white text-xl font-bold">P</span>
-          </div>
-          <h1 className="text-4xl font-bold text-white">ParcelPilot</h1>
+      <div className="text-center space-y-4 flex flex-col items-center">
+        <div className="w-28 h-28 relative flex items-center justify-center rounded-3xl bg-indigo-950/40 border border-indigo-500/30 shadow-xl shadow-indigo-500/10 overflow-hidden mb-2">
+          <MascotViewport />
+        </div>
+        <div className="flex items-center justify-center gap-3">
+          <h1 className="text-4xl font-bold text-white tracking-tight">ParcelPilot</h1>
         </div>
         <p className="text-gray-400 text-lg max-w-md">
           Internal AI support agent for operations and customer success teams.
