@@ -74,9 +74,17 @@ def _call_llm_with_fallback(messages, structured_output_class=None, model_name: 
                 _groq_failure_count += 1
                 log.error("llm.failure_switching_fallback", error=str(inner_e))
                 fallback_llm = _get_llm(force_fallback=True)
-                raw = fallback_llm.invoke(formatted_messages)
-                return parser.parse(raw.content)
-    return llm.invoke(messages)
+                try:
+                    return fallback_llm.with_structured_output(structured_output_class).invoke(messages)
+                except Exception:
+                    raw = fallback_llm.invoke(formatted_messages)
+                    return parser.parse(raw.content)
+    try:
+        return llm.invoke(messages)
+    except Exception as e:
+        log.warning("llm.direct_invoke_fallback", error=str(e))
+        fallback_llm = _get_llm(force_fallback=True)
+        return fallback_llm.invoke(messages)
 
 
 # ── System prompt ──────────────────────────────────────────────────────────────
